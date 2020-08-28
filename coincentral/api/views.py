@@ -1,4 +1,4 @@
-
+"""Views serving GET requuests."""
 import time
 from datetime import datetime, timedelta
 from rest_framework import status
@@ -15,6 +15,7 @@ market_data_offset = 1
 
 
 class OncePerDayUserThrottle(UserRateThrottle):
+	"""Throttling class definition."""
     rate = '1/day'
 
 
@@ -42,27 +43,22 @@ def coin_list(request):
 def market_cap(request):
     """
     Retrieve coins market cap. /marketCap?coin_id=ripple&date=2020/08/05&currency=gbp
-    coin_id
-    date (YYYY/MM/DD)
-    currency (iso code)
-
-    get_coin_market_chart_range_by_id(self, id, vs_currency, from_timestamp, to_timestamp, **kwargs)
     """
     cg = CoinGeckoAPI()
-    # import pdb
-    # pdb.set_trace()
-    print(request.query_params)
+
+    # retrieve query params
+    # noqa: needs to be validated.
+    # - validate coin_id str foormat, date string format and currency string forma, and avoid `None`
+    # - helper module to convert date string to epoch, and parameter reetrieval.
     _coin_id = (request.query_params.dict()).get('coin_id', None)
     _date = datetime.strptime(
         (request.query_params.dict()).get('date', None), 
         date_format
     )
     _currency = (request.query_params.dict()).get('currency', None)
-    print(_coin_id, _currency, time.mktime(_date.timetuple()), time.mktime((_date + timedelta(days=market_data_offset)).timetuple()))
 
 
     if request.method == 'GET':
-        print(_date, (_date - timedelta(days=market_data_offset)))
         coin_market_data = cg.get_coin_market_chart_range_by_id(
             id=_coin_id, vs_currency=_currency, from_timestamp=time.mktime(_date.timetuple()), 
             to_timestamp=time.mktime((_date + timedelta(days=market_data_offset)).timetuple())
