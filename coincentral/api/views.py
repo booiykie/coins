@@ -63,7 +63,7 @@ def market_cap(request):
             id=_coin_id, vs_currency=_currency, from_timestamp=time.mktime(_date.timetuple()), 
             to_timestamp=time.mktime((_date + timedelta(hours=market_data_offset)).timetuple())
         )
-        # hard-coded the market cap extraction.
+        # hard-coded the market cap extraction. If multiple, rather zip currency to multiple vals.
         market_cap = {_currency: coin_market_data.get('market_caps', [[0,0]])[0][1]}
         return Response(data=market_cap, status=status.HTTP_200_OK)
 
