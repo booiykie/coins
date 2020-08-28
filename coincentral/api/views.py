@@ -10,8 +10,8 @@ from rest_framework.throttling import UserRateThrottle
 from pycoingecko import CoinGeckoAPI
 
 
-date_format = "%Y/%m/%d"
-market_data_offset = 1
+DATE_FORMART = "%Y/%m/%d"
+MARKET_DATA_OFFSET = 1
 
 
 class OncePerDayUserThrottle(UserRateThrottle):
@@ -53,7 +53,7 @@ def market_cap(request):
     _coin_id = (request.query_params.dict()).get('coin_id', None)
     _date = datetime.strptime(
         (request.query_params.dict()).get('date', None), 
-        date_format
+        DATE_FORMART
     )
     _currency = (request.query_params.dict()).get('currency', None)
 
@@ -61,7 +61,7 @@ def market_cap(request):
     if request.method == 'GET':
         coin_market_data = cg.get_coin_market_chart_range_by_id(
             id=_coin_id, vs_currency=_currency, from_timestamp=time.mktime(_date.timetuple()), 
-            to_timestamp=time.mktime((_date + timedelta(hours=market_data_offset)).timetuple())
+            to_timestamp=time.mktime((_date + timedelta(hours=MARKET_DATA_OFFSET)).timetuple())
         )
         # hard-coded the market cap extraction. If multiple, rather zip currency to multiple vals.
         market_cap = {_currency: coin_market_data.get('market_caps', [[0,0]])[0][1]}
