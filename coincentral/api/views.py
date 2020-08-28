@@ -15,8 +15,8 @@ market_data_offset = 1
 
 
 class OncePerDayUserThrottle(UserRateThrottle):
-	"""Throttling class definition."""
-    rate = '1/day'
+    """Throttling class definition."""
+    rate = '5/day'
 
 
 @api_view(['GET'])
@@ -61,9 +61,10 @@ def market_cap(request):
     if request.method == 'GET':
         coin_market_data = cg.get_coin_market_chart_range_by_id(
             id=_coin_id, vs_currency=_currency, from_timestamp=time.mktime(_date.timetuple()), 
-            to_timestamp=time.mktime((_date + timedelta(days=market_data_offset)).timetuple())
+            to_timestamp=time.mktime((_date + timedelta(hours=market_data_offset)).timetuple())
         )
-        market_cap = {_currency: coin_market_data.get('market_caps', [])}
+        # hard-coded the market cap extraction.
+        market_cap = {_currency: coin_market_data.get('market_caps', [[0,0]])[0][1]}
         return Response(data=market_cap, status=status.HTTP_200_OK)
 
     else:
