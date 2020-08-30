@@ -5,18 +5,13 @@ from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes, throttle_classes
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
-from rest_framework.throttling import UserRateThrottle
+
 
 from pycoingecko import CoinGeckoAPI
 
+from .helpers import datetime_conversion, string_date_to_datetime_format, extract_coin_request_params
+from .helpers import OncePerDayUserThrottle
 
-DATE_FORMART = "%Y/%m/%d"
-MARKET_DATA_OFFSET = 1
-
-
-class OncePerDayUserThrottle(UserRateThrottle):
-    """Throttling class definition."""
-    rate = '5/day'
 
 
 @api_view(['GET'])
@@ -48,20 +43,18 @@ def market_cap(request):
 
     # retrieve query params
     # noqa: needs to be validated.
-    # - validate coin_id str foormat, date string format and currency string forma, and avoid `None`
-    # - helper module to convert date string to epoch, and parameter reetrieval.
-    _coin_id = (request.query_params.dict()).get('coin_id', None)
-    _date = datetime.strptime(
-        (request.query_params.dict()).get('date', None), 
-        DATE_FORMART
-    )
-    _currency = (request.query_params.dict()).get('currency', None)
+    # - validate coin_id str format, date string format and currency string forma, and avoid `None`
+    # - helper module to convert date string to epoch, and parameter retrieval.
+    _coin_id, _date, _currency = extract_coin_request_params(request)
 
 
     if request.method == 'GET':
+    	# should the offset be + 1 or from the time given counting backwards?
+    	# all offsets in hours.
         coin_market_data = cg.get_coin_market_chart_range_by_id(
-            id=_coin_id, vs_currency=_currency, from_timestamp=time.mktime(_date.timetuple()), 
-            to_timestamp=time.mktime((_date + timedelta(hours=MARKET_DATA_OFFSET)).timetuple())
+            id=_coin_id, vs_currency=_currency,
+            from_timestamp=datetime_conversion(_date, 'h', 0),
+            to_timestamp=datetime_conversion(_date, 'h', 1)
         )
         # hard-coded the market cap extraction. If multiple, rather zip currency to multiple vals.
         market_cap = {_currency: coin_market_data.get('market_caps', [[0,0]])[0][1]}
@@ -70,3 +63,7 @@ def market_cap(request):
     else:
         res = {"code": 405, "message": f"{request.method} method not allowed."}
         return Response(data=json.dumps(res), status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+
+    
