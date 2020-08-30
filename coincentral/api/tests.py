@@ -1,34 +1,26 @@
-# from django.test import TestCase
-from unittest import TestCase
-
+"""Test module."""
 import time
-from datetime import datetime, timedelta
-from django.test import Client
-from django.test import RequestFactory
-from rest_framework.test import APIRequestFactory
-from django.test import RequestFactory
 from unittest import mock
+from unittest import TestCase
+from datetime import datetime, timedelta
 from django.test import override_settings
-from rest_framework.test import APITestCase, APIClient
+from django.test import Client, RequestFactory
 
+from rest_framework.test import APITestCase, APIClient, APIRequestFactory
 from rest_framework.decorators import api_view
 
 from .helpers import datetime_conversion, string_date_to_datetime_format, \
     extract_coin_request_params, offset_resolver, DATE_FORMART
 
-# Create your tests here.
+
 class DateParserTest(TestCase):
     date_string = '2020/08/05'
     date_time_string = '2020-08-05 00:00:00'
     incorrect_date_str = '20-08-06'
+    
     def test_date_string(self):
         date_object = string_date_to_datetime_format(self.date_string)
         self.assertEqual(str(date_object), self.date_time_string)
-
-    # def test_incorrect_date_string(self):
-    #     date_object = string_date_to_datetime_format(self.date_string)
-
-    #     self.assertNotEqual(str(date_object), self.date_time_string)
 
     def test_offset(self):
         # how can I test variable days in months and year.
@@ -105,6 +97,3 @@ class ThrottleApiTests(APITestCase):
         response = client.get(_url)
         # 429 - too many requests
         self.assertEqual(response.status_code, 429)
-
-
-
