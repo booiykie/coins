@@ -11,19 +11,16 @@ from .helpers import datetime_conversion, string_date_to_datetime_format, \
 from .helpers import OncePerDayUserThrottle
 
 
-
 @api_view(['GET'])
 @renderer_classes([JSONRenderer])
 @throttle_classes([OncePerDayUserThrottle])
 def coin_list(request):
-    """List all coins.
-    """
+    """List all coins."""
     cg = CoinGeckoAPI()
 
     if request.method == 'GET':
         coins = cg.get_coins_list()
         return Response(data=coins, status=status.HTTP_200_OK)
-
     else:
         res = {"code": 405, "message": f"{request.method} method not allowed."}
         return Response(data=json.dumps(res), status=status.HTTP_405_METHOD_NOT_ALLOWED)
@@ -33,10 +30,8 @@ def coin_list(request):
 @renderer_classes([JSONRenderer])
 @throttle_classes([OncePerDayUserThrottle])
 def market_cap(request):
-    """Retrieve coins market cap.
-    """
+    """Retrieve coins market cap."""
     cg = CoinGeckoAPI()
-
     _coin_id, _date, _currency = extract_coin_request_params(request)
 
     if request.method == 'GET':
@@ -61,6 +56,3 @@ def market_cap(request):
         res = {"code": 405, "message": f"{request.method} method not allowed."}
         return Response(data=json.dumps(res), status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-
-
-    
