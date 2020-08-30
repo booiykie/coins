@@ -16,6 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from api import views
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('coinList/', views.coin_list),
+    path('marketCap/', views.market_cap),
 ]
