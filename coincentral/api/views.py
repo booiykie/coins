@@ -1,15 +1,13 @@
 """Views serving GET requuests."""
-import time
-from datetime import datetime, timedelta
 from rest_framework import status
-from rest_framework.decorators import api_view, renderer_classes, throttle_classes
-from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
-
+from rest_framework.renderers import JSONRenderer
+from rest_framework.decorators import api_view, renderer_classes, throttle_classes
 
 from pycoingecko import CoinGeckoAPI
 
-from .helpers import datetime_conversion, string_date_to_datetime_format, extract_coin_request_params
+from .helpers import datetime_conversion, string_date_to_datetime_format, \
+    extract_coin_request_params
 from .helpers import OncePerDayUserThrottle
 
 
@@ -18,8 +16,7 @@ from .helpers import OncePerDayUserThrottle
 @renderer_classes([JSONRenderer])
 @throttle_classes([OncePerDayUserThrottle])
 def coin_list(request):
-    """
-    List all coins.
+    """List all coins.
     """
     cg = CoinGeckoAPI()
 
@@ -36,17 +33,11 @@ def coin_list(request):
 @renderer_classes([JSONRenderer])
 @throttle_classes([OncePerDayUserThrottle])
 def market_cap(request):
-    """
-    Retrieve coins market cap. /marketCap?coin_id=ripple&date=2020/08/05&currency=gbp
+    """Retrieve coins market cap.
     """
     cg = CoinGeckoAPI()
 
-    # retrieve query params
-    # noqa: needs to be validated.
-    # - validate coin_id str format, date string format and currency string forma, and avoid `None`
-    # - helper module to convert date string to epoch, and parameter retrieval.
     _coin_id, _date, _currency = extract_coin_request_params(request)
-
 
     if request.method == 'GET':
     	# should the offset be + 1 or from the time given counting backwards?
@@ -54,10 +45,16 @@ def market_cap(request):
         coin_market_data = cg.get_coin_market_chart_range_by_id(
             id=_coin_id, vs_currency=_currency,
             from_timestamp=datetime_conversion(_date, 'h', 0),
-            to_timestamp=datetime_conversion(_date, 'h', 1)
+            to_timestamp=datetime_conversion(_date, 'h', 3)
         )
-        # hard-coded the market cap extraction. If multiple, rather zip currency to multiple vals.
-        market_cap = {_currency: coin_market_data.get('market_caps', [[0,0]])[0][1]}
+        _market_cap_pointers = [
+            point for _t,point in coin_market_data.get('market_caps', [[0,0]])]
+        if len(_market_cap_pointers) > 1:
+            market_cap = {_currency: _market_cap_pointers}
+        elif len(_market_cap_pointers) == 1:
+        	market_cap = {_currency: _market_cap_pointers[0]}
+        else:
+        	raise Exception(f"No market cap possible with iincorrect time offset.")
         return Response(data=market_cap, status=status.HTTP_200_OK)
 
     else:
