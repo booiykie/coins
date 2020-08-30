@@ -27,9 +27,11 @@ def offset_resolver(_time_delta_offset: str, offset: int):
     elif _time_delta_offset == 'm':
         _time_delta_offset = timedelta(minutes=offset)
     elif _time_delta_offset == 'M':
-        _time_delta_offset = timedelta(months=offset)
+        _time_delta_offset = timedelta(days=offset*30)
     elif _time_delta_offset == 'Y':
-        _time_delta_offset = timedelta(years=offset)
+        _time_delta_offset = timedelta(days=offset*365)
+    else:
+        raise Exception(f"invalid time offset. Use h, m, M or Y.")
     return _time_delta_offset
 
 def datetime_conversion(
@@ -61,4 +63,4 @@ def extract_coin_request_params(req: Request) -> list:
 
 class OncePerDayUserThrottle(UserRateThrottle):
     """Throttling class definition."""
-    rate = '5/day'
+    rate = '5/min'
