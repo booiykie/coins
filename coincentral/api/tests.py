@@ -67,7 +67,7 @@ class ParamsTest(TestCase):
             drf_request = response.renderer_context['request']
             params = extract_coin_request_params(drf_request)
         except Exception as e:
-            self.assertEqual(e.__str__(), "Missing param: {'date'}")
+            self.assertEqual(e.__str__(), "Missing param: ['date']")
 
     def test_no_params(self):
         try:
@@ -80,7 +80,7 @@ class ParamsTest(TestCase):
             drf_request = response.renderer_context['request']
             params = extract_coin_request_params(drf_request)
         except Exception as e:
-            self.assertEqual(e.__str__(), "Missing param: {'date', 'currency'}")
+            self.assertEqual(e.__str__(), "Missing param: ['currency', 'date']")
 
 
     def test_cache_key_genrator(self):

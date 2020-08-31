@@ -53,7 +53,7 @@ def extract_coin_request_params(req: Request) -> list:
     key_validation = _expected_params_set & _params_keys_set
     if len(key_validation) < 3:
         raise Exception(
-            f'Missing param: {set(_expected).difference(_params.keys())}')
+            f'Missing param: {sorted(set(_expected).difference(_params.keys()), key=str.lower)}')
     else:
         _coin_id = _params.get('coin_id')
         _currency = _params.get('currency')
