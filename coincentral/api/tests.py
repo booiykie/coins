@@ -1,15 +1,11 @@
 """Test module."""
-import time
-from unittest import mock
 from unittest import TestCase
 from datetime import datetime, timedelta
 from django.test import override_settings
-from django.test import Client, RequestFactory
+from django.test import Client
+from rest_framework.test import APITestCase, APIClient
 
-from rest_framework.test import APITestCase, APIClient, APIRequestFactory
-from rest_framework.decorators import api_view
-
-from .helpers import datetime_conversion, string_date_to_datetime_format, \
+from .helpers import string_date_to_datetime_format, \
     extract_coin_request_params, offset_resolver, cache_key_generator, DATE_FORMART
 
 
@@ -81,7 +77,6 @@ class ParamsTest(TestCase):
             params = extract_coin_request_params(drf_request)
         except Exception as e:
             self.assertEqual(e.__str__(), "Missing param: ['currency', 'date']")
-
 
     def test_cache_key_genrator(self):
         key = cache_key_generator(

@@ -1,5 +1,5 @@
-# coins
-###Traded coins API.###
+# Coins Central
+###Traded coins API.
 
 
 ##Steps Followed ##
@@ -14,17 +14,17 @@
 8. Asses the request flow and highlight areas to enhance. to achieve better scaling, cooding pitfalls and rewrites required.
 
 
-##1. Setting up the Environment##
+##1. Setting up the Environment
 
 Either set the environment globally or using virtual environments.
 Install dependencies from the `requirements` file with,
 `pip install -r requirements.txt`
 
-##2. Running Tests##
+##2. Running Tests
 
 `python manage.py test`
 
-##3. Running Server##
+##3. Running Server
 
 `python manage.py runserver 9000`
 
@@ -35,3 +35,8 @@ Endpoints:
 a. `http://127.0.0.1:9009/coinList`
 
 b. `http://127.0.0.1:9009/marketCap?coin_id=ripple&date=2020/08/05&currency=gbp`
+
+##4. Future Work & Recommendations
+- datetime offset hint can be parsed as part of the request, in a form of a param.
+- cache lifespan can be calculated correctly depending on a deeper understanding of the expected functionality and consumers.
+- the two endpoints are on a different cache life-span, the list of coins is not expected to change frequently, but the market data is expected to be changing per minute.

@@ -1,5 +1,7 @@
 """Views serving GET requuests."""
-from djangocache import cache_page
+import json
+
+from django.core.cache import cache
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
@@ -7,19 +9,14 @@ from rest_framework.decorators import api_view, renderer_classes, throttle_class
 
 from pycoingecko import CoinGeckoAPI
 
-from .helpers import datetime_conversion, string_date_to_datetime_format, \
-    extract_coin_request_params, cache_key_generator
+from .helpers import datetime_conversion, extract_coin_request_params, \
+    cache_key_generator
 from .helpers import OncePerDayUserThrottle
 
-
-from django.core.cache import cache
-from django.views.decorators.http import last_modified
 
 @api_view(['GET'])
 @renderer_classes([JSONRenderer])
 @throttle_classes([OncePerDayUserThrottle])
-# @cache_page(cache_timeout=600)
-# @etag(etag_generator)
 def coin_list(request):
     """List all coins."""
     cg = CoinGeckoAPI()
