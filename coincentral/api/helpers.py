@@ -60,6 +60,8 @@ def extract_coin_request_params(req: Request) -> list:
         _date = string_date_to_datetime_format(_params.get('date'))
     return _coin_id, _date, _currency
 
+def cache_key_generator(coin_id, date, currency):
+    return f'{coin_id.replace(":", "-")}_{str(date).replace(":", "-")}_{currency}_{datetime.now().hour}'
 
 class OncePerDayUserThrottle(UserRateThrottle):
     """Throttling class definition."""
