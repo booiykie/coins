@@ -10,7 +10,7 @@ from rest_framework.test import APITestCase, APIClient, APIRequestFactory
 from rest_framework.decorators import api_view
 
 from .helpers import datetime_conversion, string_date_to_datetime_format, \
-    extract_coin_request_params, offset_resolver, DATE_FORMART
+    extract_coin_request_params, offset_resolver, cache_key_generator, DATE_FORMART
 
 
 class DateParserTest(TestCase):
@@ -67,7 +67,7 @@ class ParamsTest(TestCase):
             drf_request = response.renderer_context['request']
             params = extract_coin_request_params(drf_request)
         except Exception as e:
-            self.assertEqual(e.__str__(), "Missing param: {'date'}")
+            self.assertEqual(e.__str__(), "Missing param: ['date']")
 
     def test_no_params(self):
         try:
@@ -80,10 +80,16 @@ class ParamsTest(TestCase):
             drf_request = response.renderer_context['request']
             params = extract_coin_request_params(drf_request)
         except Exception as e:
-            self.assertEqual(e.__str__(), "Missing param: {'date', 'currency'}")
+            self.assertEqual(e.__str__(), "Missing param: ['currency', 'date']")
+
+
+    def test_cache_key_genrator(self):
+        key = cache_key_generator(
+            'ripple', datetime.strptime('2020/08/05', DATE_FORMART), 'gbp')
+        self.assertEqual(key, 'ripple_2020-08-05 00-00-00_gbp_1')
         
 
-class ThrottleApiTests(APITestCase):
+class ThrottleApiTest(APITestCase):
     TESTING_THRESHOLD = 5
     
     @override_settings(THROTTLE_THRESHOLD=TESTING_THRESHOLD)
