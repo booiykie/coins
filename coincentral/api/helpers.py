@@ -14,10 +14,12 @@ _TIME_OFFSET = (
     ('Y', 'years')
 )
 
+
 def string_date_to_datetime_format(date_str: str) -> datetime:
     """Conevert date string to datetime object."""
     _date = datetime.strptime(date_str, DATE_FORMART)
     return _date
+
 
 def offset_resolver(_time_delta_offset: str, offset: int):
     """Resolving the required offset"""
@@ -34,6 +36,7 @@ def offset_resolver(_time_delta_offset: str, offset: int):
         raise Exception(f"invalid time offset. Use h, m, M or Y.")
     return _time_delta_offset
 
+
 def datetime_conversion(
     date_to_convert: str, time_offset: str, offset: int) -> str:
     """Convert given to epoch time with parsed offset."""
@@ -42,6 +45,7 @@ def datetime_conversion(
         (date_to_convert + _offset).timetuple()
     )
     return _time
+
 
 def extract_coin_request_params(req: Request) -> list:
     """Extract params required for the 3rd party request/query."""
@@ -60,8 +64,11 @@ def extract_coin_request_params(req: Request) -> list:
         _date = string_date_to_datetime_format(_params.get('date'))
     return _coin_id, _date, _currency
 
+
 def cache_key_generator(coin_id, date, currency):
+    """Generate a cache key for coin market data."""
     return f'{coin_id.replace(":", "-")}_{str(date).replace(":", "-")}_{currency}_{datetime.now().hour}'
+
 
 class OncePerDayUserThrottle(UserRateThrottle):
     """Throttling class definition."""
