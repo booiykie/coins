@@ -15,11 +15,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls import url
+from rest_framework import routers
 
 from api import views
+
+router = routers.SimpleRouter()
+router.register(r'v1/coins', views.CoinsViewSet, basename='coins')
+router.register(r'v1/marketCap', views.MarketCapViewSet, basename='coins')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('coinList/', views.coin_list),
     path('marketCap/', views.market_cap),
+    url(r'^', include(router.urls)),
 ]
