@@ -6,7 +6,7 @@
 
 1. Study the https://www.coingecko.com/en/api and different endpoints, focused mostly on the coin listing, and date ranged market data endpoints.
 2. Investigate the python wrapperr library, pycoingecko.
-3. Setup the project skeleton and dependency in a virtual environment using pyenv.
+3. Setup the project skeleton and dependency in a *virtual environment using pyenv*.
 4. Create function views for the required endpoints accepting only `GET` requests.
 5. Instantiate the API wrapper library with every request. Started with the coin list API view.
 6. Added a Json render, as insinuated by requirement, and a throttling class and decorator to try out API throttling.
@@ -19,6 +19,10 @@
 Either set the environment globally or using virtual environments.
 Install dependencies from the `requirements` file with,
 `pip install -r requirements.txt`
+
+This can be created in a virtual environment, using pyenv-virtualenv plugin as documented in https://github.com/pyenv/pyenv-virtualenv.
+
+`pyenv virtualenv 3.8.0 coins-api-3.8.0`
 
 ##2. Running Tests
 
