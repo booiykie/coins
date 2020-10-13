@@ -1,6 +1,6 @@
 """Views serving GET requuests."""
 from djangocache import cache_page
-from rest_framework import status
+from rest_framework import viewsets, mixins, status
 from django.core.cache import cache
 from django.views.decorators.http import last_modified
 from rest_framework.response import Response
@@ -9,9 +9,30 @@ from rest_framework.decorators import api_view, renderer_classes, throttle_class
 
 from pycoingecko import CoinGeckoAPI
 
+from .models import Coin, MarketCap
+from .serializers import CoinSerializer, MarketCapSerializer
 from .helpers import datetime_conversion, string_date_to_datetime_format, \
     extract_coin_request_params, cache_key_generator
 from .helpers import OncePerDayUserThrottle
+
+
+class CoinViewSet(mixins.ListModelMixin):
+    """Coins viewset to list all coins available."""
+    def list(self, requests):
+        # get coinslist from db cache, or from API
+        queryset = Coin.objects.all()
+        serializer = CoinSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+class MarketCapViewSet(mixins.RetrieveModelMixin):
+    """Market cap views to retrieve the cap."""
+    def retrieve(self, request, coin_id=None, date=None, currency=None):
+        queryset = MarketCap.objects.all()
+        market_cap = get_object_or_404(
+            queryset, coin__id=coin_id, date=date, currency=currency)
+        serializer = MarketCapSerializer(market_cap)
+        return Response(serializer.data)
 
 
 @api_view(['GET'])
