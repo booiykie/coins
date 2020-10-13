@@ -10,7 +10,7 @@
 4. Create function views for the required endpoints accepting only `GET` requests.
 5. Instantiate the API wrapper library with every request. Started with the coin list API view.
 6. Added a Json render, as insinuated by requirement, and a throttling class and decorator to try out API throttling.
-7. Completetd the firrrst iteration by achieving the main requirements, API request and rersponses.
+7. Completetd the first iteration by achieving the main requirements, API request and rersponses.
 8. Asses the request flow and highlight areas to enhance. to achieve better scaling, cooding pitfalls and rewrites required.
 
 
@@ -27,6 +27,10 @@ This can be created in a virtual environment, using pyenv-virtualenv plugin as d
 ##2. Running Tests
 
 `python manage.py test`
+
+and use pytest to leverage fixtures:
+`pytest`
+
 
 ##3. Running Server
 

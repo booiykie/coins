@@ -81,7 +81,7 @@ class ParamsTest(TestCase):
     def test_cache_key_genrator(self):
         key = cache_key_generator(
             'ripple', datetime.strptime('2020/08/05', DATE_FORMART), 'gbp')
-        self.assertEqual(key, 'ripple_2020-08-05 00-00-00_gbp_1')
+        self.assertEqual(key, 'ripple_2020-08-05 00-00-00_gbp_8')
         
 
 class ThrottleApiTest(APITestCase):
